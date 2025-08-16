@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gessage - تولیدکننده پیام کامیت گیت با هوش مصنوعی</title>
+    <meta name="description" content="پیام‌های کامیت با کیفیت بالا از تغییرات staged با استفاده از هوش مصنوعی تولید کنید. ابزار CLI چندپلتفرمی با چندین بک‌اند هوش مصنوعی.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Persian Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #e57768;
+            --primary-dark: #d85a47;
+            --primary-light: #f08977;
+            --dark: #1a1a1a;
+            --gray-900: #111827;
+            --gray-800: #1f2937;
+            --gray-700: #374151;
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-400: #9ca3af;
+            --gray-300: #d1d5db;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Vazirmatn', 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--gray-800);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--gray-700);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .language-switcher {
+            display: flex;
+            gap: 0.5rem;
+            margin-left: 1rem;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 2px solid var(--gray-300);
+            color: var(--gray-600);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .lang-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .lang-btn.active:hover {
+            color: white;
+        }
+
+        .github-btn {
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .github-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(229, 119, 104, 0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 8rem 0 4rem;
+            text-align: center;
+            background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><circle cx="200" cy="200" r="2" fill="%23e57768" opacity="0.3"><animate attributeName="r" values="2;10;2" dur="3s" repeatCount="indefinite"/></circle><circle cx="800" cy="300" r="3" fill="%23e57768" opacity="0.2"><animate attributeName="r" values="3;12;3" dur="4s" repeatCount="indefinite"/></circle><circle cx="400" cy="600" r="2" fill="%23e57768" opacity="0.4"><animate attributeName="r" values="2;8;2" dur="2.5s" repeatCount="indefinite"/></circle></svg>');
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, white 0%, var(--primary-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--gray-300);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 10px 30px rgba(229, 119, 104, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(229, 119, 104, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        /* Installation Demo */
+        .install-demo {
+            background: var(--gray-800);
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem auto;
+            max-width: 800px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .terminal {
+            background: var(--gray-900);
+            border-radius: 10px;
+            padding: 1rem;
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            position: relative;
+            direction: ltr;
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--gray-700);
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #ff5f57; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #28ca42; }
+
+        .terminal-content {
+            color: #00ff88;
+            font-size: 0.9rem;
+        }
+
+        .command {
+            color: var(--primary-light);
+        }
+
+        .output {
+            color: var(--gray-400);
+            margin: 0.5rem 0;
+        }
+
+        /* Better code/terminal responsiveness */
+        .terminal, .demo-terminal, .tab-content {
+            overflow-x: auto;
+        }
+        .terminal-content, .tab-content {
+            overflow-wrap: anywhere;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 6rem 0;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--gray-900);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--gray-600);
+            margin-bottom: 4rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid var(--gray-200);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(229, 119, 104, 0.15);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--gray-900);
+        }
+
+        .feature-card p {
+            color: var(--gray-600);
+            line-height: 1.7;
+        }
+
+        /* Models Section */
+        .models {
+            padding: 6rem 0;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+
+        .models-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .model-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .model-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+        }
+
+        .model-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(229, 119, 104, 0.1);
+        }
+
+        .model-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .model-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--gray-900);
+        }
+
+        .model-card .tag {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+
+        /* Demo Section */
+        .demo {
+            padding: 6rem 0;
+            background: var(--gray-900);
+            color: white;
+        }
+
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .demo-terminal {
+            background: var(--gray-800);
+            border-radius: 15px;
+            padding: 1.5rem;
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            direction: ltr;
+        }
+
+        .demo-line {
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            animation: typewriter 0.5s ease forwards;
+        }
+
+        @keyframes typewriter {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Installation Section */
+        .installation {
+            padding: 6rem 0;
+            background: white;
+        }
+
+        .install-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            background: var(--gray-100);
+            padding: 0.5rem;
+            border-radius: 50px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .tab-button {
+            background: transparent;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            font-family: inherit;
+        }
+
+        .tab-button.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab-content {
+            background: var(--gray-900);
+            padding: 2rem;
+            border-radius: 15px;
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            color: #00ff88;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            direction: ltr;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.75rem;
+            left: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 0.6rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            box-shadow: 0 6px 16px rgba(229, 119, 104, 0.3);
+        }
+
+        .copy-btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+        .copy-btn:active { transform: translateY(0); }
+        .copy-btn i { pointer-events: none; }
+        .copy-btn:focus-visible {
+            outline: 2px solid var(--primary-light);
+            outline-offset: 2px;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--gray-900);
+            color: white;
+            padding: 3rem 0 1rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            margin-bottom: 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--gray-400);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--gray-700);
+            padding-top: 1rem;
+            color: var(--gray-500);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .demo-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .models-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+
+            .language-switcher {
+                margin-left: 0.5rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        /* RTL specific adjustments */
+        .hero .install-demo {
+            direction: rtl;
+        }
+
+        .hero .install-demo .terminal {
+            direction: ltr;
+        }
+
+        .demo-container {
+            direction: rtl;
+        }
+
+        .demo-container .demo-terminal {
+            direction: ltr;
+        }
+
+        /* Code blocks remain LTR */
+        code, pre, .terminal, .demo-terminal, .tab-content {
+            direction: ltr;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div style="display: flex; align-items: center;">
+                    <div class="language-switcher">
+                        <a href="index.html" class="lang-btn">EN</a>
+                        <a href="fa.html" class="lang-btn active">فا</a>
+                    </div>
+                    <a href="https://github.com/ispooya/gessage-cli" class="github-btn">
+                        <i class="fa-brands fa-github"></i>
+                        گیت‌هاب
+                    </a>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#features">ویژگی‌ها</a></li>
+                    <li><a href="#models">مدل‌ها</a></li>
+                    <li><a href="#demo">نمایش</a></li>
+                    <li><a href="#installation">نصب</a></li>
+                </ul>
+                <a href="#" class="logo">
+                    <img src="logo.png" alt="Gessage" style="height: 30px;">
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="floating">پیام‌های کامیت گیت با هوش مصنوعی</h1>
+                <p class="hero-subtitle">
+                    پیام‌های کامیت با کیفیت بالا از تغییرات staged با استفاده از چندین بک‌اند هوش مصنوعی تولید کنید. 
+                    چندپلتفرمی، امن و دوستدار توسعه‌دهنده.
+                </p>
+                <div class="cta-buttons">
+                    <a href="#installation" class="btn-primary">
+                        <i class="fa-solid fa-download"></i>
+                        شروع کنید
+                    </a>
+                    <a href="#demo" class="btn-secondary">
+                        <i class="fa-solid fa-play"></i>
+                        نمایش دمو
+                    </a>
+                </div>
+
+                <!-- Installation Demo -->
+                <div class="install-demo">
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <div class="terminal-dot dot-red"></div>
+                            <div class="terminal-dot dot-yellow"></div>
+                            <div class="terminal-dot dot-green"></div>
+                        </div>
+                        <div class="terminal-content">
+                            <div class="command">$ curl -fsSL https://raw.githubusercontent.com/ispooya/gessage-cli/refs/heads/main/install.sh | bash</div>
+                            <div class="output">✨ Installing Gessage CLI...</div>
+                            <div class="output">🎉 Installation complete!</div>
+                            <div class="command">$ gessage setup --model openrouter</div>
+                            <div class="output">🔧 Setting up OpenRouter (Free)...</div>
+                            <div class="command">$ git add . && gessage</div>
+                            <div class="output">🤖 Generated: feat: add user authentication system</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">چرا Gessage را انتخاب کنیم؟</h2>
+            <p class="section-subtitle">
+                قابلیت‌های قدرتمند طراحی شده برای گردش کار توسعه مدرن
+            </p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <h3>چندین بک‌اند هوش مصنوعی</h3>
+                    <p>پشتیبانی از OpenRouter (رایگان)، OpenAI GPT-4o و مدل‌های محلی Ollama. بهترین هوش مصنوعی را برای نیازتان انتخاب کنید.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-shield"></i>
+                    </div>
+                    <h3>امنیت اول</h3>
+                    <p>حذف خودکار اطلاعات محرمانه تضمین می‌کند که داده‌های حساس شما هرگز دستگاهتان را ترک نکرده یا به ارائه‌دهندگان هوش مصنوعی نرسد.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <h3>کامیت‌های متعارف</h3>
+                    <p>اجباری کردن فرمت درست پیام کامیت با عنوان ≤ ۷۲ کاراکتر، متن ≤ ۱۰۰ ستون و انواع استاندارد.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <h3>انتخاب خودکار هوشمند</h3>
+                    <p>به طور خودکار بهترین مدل را بر اساس اندازه diff انتخاب می‌کند، با گزینه‌های تنظیم دستی در دسترس.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </div>
+                    <h3>جریان تعاملی</h3>
+                    <p>تایید، ویرایش، تولید مجدد یا لغو پیام‌های کامیت قبل از اعمال. کنترل کامل بر روی کامیت‌هایتان.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-globe"></i>
+                    </div>
+                    <h3>چندپلتفرمی</h3>
+                    <p>بدون مشکل در لینوکس، macOS و ویندوز کار می‌کند. نصب یک خطی برای همه پلتفرم‌ها.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Models Section -->
+    <section id="models" class="models">
+        <div class="container">
+            <h2 class="section-title">مدل‌های هوش مصنوعی پشتیبانی شده</h2>
+            <p class="section-subtitle">
+                از چندین ارائه‌دهنده هوش مصنوعی انتخاب کنید تا با گردش کار و بودجه‌تان مطابقت داشته باشد
+            </p>
+
+            <div class="models-grid">
+                <div class="model-card">
+                    <div class="model-icon">🆓</div>
+                    <h3>OpenRouter (رایگان)</h3>
+                    <p>سطح رایگان با مدل‌هایی مثل qwen/qwen3-coder:free</p>
+                    <span class="tag">پیشنهادی</span>
+                </div>
+
+                <div class="model-card">
+                    <div class="model-icon">🧠</div>
+                    <h3>OpenAI GPT-4o</h3>
+                    <p>مدل هوش مصنوعی پریمیوم برای بالاترین کیفیت نتایج</p>
+                    <span class="tag">پریمیوم</span>
+                </div>
+
+                <div class="model-card">
+                    <div class="model-icon">🏠</div>
+                    <h3>Ollama (محلی)</h3>
+                    <p>مدل‌های هوش مصنوعی را به صورت محلی برای حریم خصوصی کامل اجرا کنید</p>
+                    <span class="tag">خصوصی</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section id="demo" class="demo">
+        <div class="container">
+            <h2 class="section-title" style="color: white;">Gessage را در عمل ببینید</h2>
+            <div class="demo-container">
+                <div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">نمونه گردش کار واقعی</h3>
+                    <p style="color: var(--gray-300); line-height: 1.7;">
+                        ببینید که چگونه Gessage تغییرات staged شما را تحلیل می‌کند و پیام‌های کامیت کاملی 
+                        مطابق با استانداردهای Conventional Commits تولید می‌کند. دیگر کامیت‌هایی مثل "fix stuff" یا "update code" نخواهید داشت!
+                    </p>
+                </div>
+                <div class="demo-terminal">
+                    <div class="demo-line" style="animation-delay: 0.5s;">
+                        <span style="color: var(--primary);">$</span> git add src/auth.js
+                    </div>
+                    <div class="demo-line" style="animation-delay: 1s;">
+                        <span style="color: var(--primary);">$</span> gessage
+                    </div>
+                    <div class="demo-line" style="animation-delay: 1.5s;">
+                        <span style="color: #00ff88;">🔍 Analyzing staged changes...</span>
+                    </div>
+                    <div class="demo-line" style="animation-delay: 2s;">
+                        <span style="color: #00ff88;">🤖 Generating commit message...</span>
+                    </div>
+                    <div class="demo-line" style="animation-delay: 2.5s;">
+                        <span style="color: var(--primary-light);">✨ Generated message:</span>
+                    </div>
+                    <div class="demo-line" style="animation-delay: 3s;">
+                        <span style="color: white;">feat(auth): implement JWT token validation</span>
+                    </div>
+                    <div class="demo-line" style="animation-delay: 3.5s;">
+                        <span style="color: #00ff88;">✅ Commit created successfully!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Installation Section -->
+    <section id="installation" class="installation">
+        <div class="container">
+            <h2 class="section-title">نصب سریع</h2>
+            <p class="section-subtitle">
+                در چند ثانیه با نصب‌کننده‌های یک خطی ما شروع کنید
+            </p>
+
+            <div class="install-tabs">
+                <button class="tab-button active" data-tab="linux">Linux/macOS</button>
+                <button class="tab-button" data-tab="windows">Windows</button>
+            </div>
+
+            <div class="tab-content" id="linux-content">
+                <button class="copy-btn" type="button" aria-label="کپی در کلیپ‌بورد" title="کپی" onclick="copyToClipboard('linux-cmd')">
+                    <i class="far fa-copy"></i>
+                </button>
+                <div id="linux-cmd">curl -fsSL https://raw.githubusercontent.com/ispooya/gessage-cli/refs/heads/main/install.sh | bash</div>
+            </div>
+
+            <div class="tab-content" id="windows-content" style="display: none;">
+                <button class="copy-btn" type="button" aria-label="کپی در کلیپ‌بورد" title="کپی" onclick="copyToClipboard('windows-cmd')">
+                    <i class="far fa-copy"></i>
+                </button>
+                <div id="windows-cmd">iwr -useb https://raw.githubusercontent.com/ispooya/gessage-cli/refs/heads/main/install.ps1 | iex</div>
+            </div>
+
+            <div style="text-align: center; margin-top: 3rem;">
+                <h3 style="margin-bottom: 1rem;">تنظیم سریع</h3>
+                <div style="background: var(--gray-100); padding: 2rem; border-radius: 15px; max-width: 600px; margin: 0 auto;">
+                    <div style="margin-bottom: 1rem;">
+                        <strong>۱. مدل هوش مصنوعی مورد نظرتان را تنظیم کنید:</strong><br>
+                        <code style="background: var(--gray-200); padding: 0.25rem 0.5rem; border-radius: 5px;">gessage setup --model openrouter</code>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>۲. تغییراتتان را stage کنید:</strong><br>
+                        <code style="background: var(--gray-200); padding: 0.25rem 0.5rem; border-radius: 5px;">git add .</code>
+                    </div>
+                    <div>
+                        <strong>۳. پیام کامیت تولید کنید:</strong><br>
+                        <code style="background: var(--gray-200); padding: 0.25rem 0.5rem; border-radius: 5px;">gessage</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="https://github.com/ispooya/gessage-cli">مخزن CLI</a>
+                    <a href="https://openrouter.ai/settings/keys">دریافت کلید API رایگان</a>
+                    <a href="https://github.com/ispooya">@ispooya</a>
+                </div>
+                <p dir="rtl" style="color: var(--gray-400); margin-bottom: 1rem;">
+                    ساخته شده با ❤️ توسط <a href="https://github.com/ispooya" style="color: var(--primary);">پویا کریمی</a>
+                </p>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; ۱۴۰۴ Gessage.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Tab functionality
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tab = button.dataset.tab;
+                
+                // Remove active class from all buttons
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // Hide all tab contents
+                tabContents.forEach(content => {
+                    content.style.display = 'none';
+                });
+                
+                // Show selected tab content
+                document.getElementById(`${tab}-content`).style.display = 'block';
+            });
+        });
+
+        // Copy to clipboard functionality
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                // Show success feedback
+                const button = element.parentElement.querySelector('.copy-btn');
+                const originalIcon = button.innerHTML;
+                button.innerHTML = '<i class="fa-solid fa-check"></i>';
+                button.style.background = '#10b981';
+                
+                setTimeout(() => {
+                    button.innerHTML = originalIcon;
+                    button.style.background = 'var(--primary)';
+                }, 2000);
+            });
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+                header.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.1)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+                header.style.boxShadow = 'none';
+            }
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in-up');
+                }
+            });
+        }, observerOptions);
+
+        // Observe feature cards and other elements for animation
+        document.querySelectorAll('.feature-card, .model-card').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Demo animation trigger
+        const demoObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const lines = entry.target.querySelectorAll('.demo-line');
+                    lines.forEach((line, index) => {
+                        setTimeout(() => {
+                            line.style.opacity = '1';
+                            line.style.transform = 'translateX(0)';
+                        }, index * 500);
+                    });
+                }
+            });
+        }, { threshold: 0.5 });
+
+        const demoSection = document.querySelector('.demo-terminal');
+        if (demoSection) {
+            demoObserver.observe(demoSection);
+        }
+
+        // Mobile menu toggle (if needed)
+        const createMobileMenu = () => {
+            const nav = document.querySelector('.nav');
+            const navLinks = document.querySelector('.nav-links');
+            
+            if (window.innerWidth <= 768) {
+                if (!document.querySelector('.mobile-menu-btn')) {
+                    const mobileBtn = document.createElement('button');
+                    mobileBtn.className = 'mobile-menu-btn';
+                    mobileBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
+                    mobileBtn.style.cssText = `
+                        display: block;
+                        background: none;
+                        border: none;
+                        color: var(--gray-700);
+                        font-size: 1.2rem;
+                        cursor: pointer;
+                        padding: 0.5rem;
+                    `;
+                    
+                    mobileBtn.addEventListener('click', () => {
+                        const isVisible = navLinks.style.display === 'flex';
+                        navLinks.style.display = isVisible ? 'none' : 'flex';
+                        navLinks.style.flexDirection = 'column';
+                        navLinks.style.position = 'absolute';
+                        navLinks.style.top = '100%';
+                        navLinks.style.right = '0';
+                        navLinks.style.left = 'auto';
+                        navLinks.style.background = 'white';
+                        navLinks.style.padding = '1rem';
+                        navLinks.style.boxShadow = '0 5px 20px rgba(0,0,0,0.1)';
+                    });
+                    
+                    nav.appendChild(mobileBtn);
+                }
+            } else {
+                const mobileBtn = document.querySelector('.mobile-menu-btn');
+                if (mobileBtn) {
+                    mobileBtn.remove();
+                }
+                navLinks.style.display = 'flex';
+                navLinks.style.position = 'static';
+                navLinks.style.flexDirection = 'row';
+                navLinks.style.background = 'none';
+                navLinks.style.boxShadow = 'none';
+            }
+        };
+
+        window.addEventListener('resize', createMobileMenu);
+        createMobileMenu();
+
+        // Add some interactive hover effects
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Particle animation for hero section
+        const createParticles = () => {
+            const hero = document.querySelector('.hero');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.style.cssText = `
+                    position: absolute;
+                    width: 2px;
+                    height: 2px;
+                    background: var(--primary);
+                    border-radius: 50%;
+                    opacity: 0.3;
+                    animation: float ${3 + Math.random() * 2}s ease-in-out infinite;
+                    animation-delay: ${Math.random() * 2}s;
+                    left: ${Math.random() * 100}%;
+                    top: ${Math.random() * 100}%;
+                `;
+                hero.appendChild(particle);
+            }
+        };
+
+        // Initialize particles
+        createParticles();
+
+        // Add loading animation
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s ease';
+            
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+
+        // Add interactive terminal typing effect for hero
+        const terminalLines = document.querySelectorAll('.terminal-content > div');
+        let currentLine = 0;
+
+        const typeLines = () => {
+            if (currentLine < terminalLines.length) {
+                terminalLines[currentLine].style.opacity = '1';
+                terminalLines[currentLine].style.animation = 'typewriter 0.5s ease forwards';
+                currentLine++;
+                setTimeout(typeLines, 1000);
+            }
+        };
+
+        // Start typing animation when hero is visible
+        const heroObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    setTimeout(typeLines, 1000);
+                    heroObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        heroObserver.observe(document.querySelector('.hero'));
+
+        // Add scroll progress indicator
+        const createScrollIndicator = () => {
+            const indicator = document.createElement('div');
+            indicator.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 0%;
+                height: 4px;
+                background: linear-gradient(90deg, var(--primary), var(--primary-light));
+                z-index: 9999;
+                transition: width 0.1s ease;
+            `;
+            document.body.appendChild(indicator);
+
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.pageYOffset;
+                const docHeight = document.body.scrollHeight - window.innerHeight;
+                const scrollPercent = (scrollTop / docHeight) * 100;
+                indicator.style.width = scrollPercent + '%';
+            });
+        };
+
+        createScrollIndicator();
+    </script>
+</body>
+</html>
